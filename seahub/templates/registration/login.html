@@ -14,7 +14,7 @@
 html, body, #wrapper { height:100%; }
 #wrapper {
     background: url('{{ MEDIA_URL }}{{login_bg_image_path}}') center top no-repeat scroll;
-    background-size: cover;
+    background-size: 100% 100%;
     padding-top:1px;
 }
 #lang {
@@ -26,12 +26,133 @@ html, body, #wrapper { height:100%; }
 #lang-context-selector {
     text-align:left;
 }
+
+.login-panel-logo {
+    margin: 0 auto 30px;
+}
+
+.custom-module {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.custom-module {
+    display: flex;
+    width: 680px;
+    height: 300px;
+    padding: 20px 40px;
+    font-size: 16px;
+}
+
+.custom-module .introduce {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.custom-module .introduce .login-item {
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.custom-module .introduce .text-placeholder {
+    width: 1px;
+    height: 24px;
+}
+
+.custom-module .jump-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 160px;
+    height: 35px;
+    margin-top: 16px;
+    border: 1px solid #333;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.custom-module .jump-btn:hover {
+    color: #fff;
+    background: #0737A9;
+}
+
+.custom-module .jump-btn.net-id-btn {
+    width: 160px;
+    height: 38px;
+    color: #fff;
+    background: #0737A9;
+}
+
+@media (max-width: 767.5px) {
+    #wrapper {
+        background-size: cover;
+    }
+
+    .custom-module {
+        padding: 20px 40px;
+        font-size: 16px;
+        width: 100%;
+        height: auto;
+    }
+
+    .custom-module .introduce {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .custom-module .introduce .text-placeholder {
+        display: inline;
+        width: 0;
+        height: 0;
+    }
+
+}
+
+.login-panel.main-module .submit {
+    color: #fff;
+    background: #0737A9;
+}
+
 </style>
 {% endblock %}
 
 {% block main_content %}
 <div class="login-panel-outer-container vh">
-<div class="login-panel">
+{% if LANGUAGE_CODE != 'zh-cn' %}
+<div class="login-panel custom-module">
+    <div class="logo"></div>
+    <div class="introduce">
+        <div class="login-item">
+            <div class="mb-2">If you have Duke NetID, please choose <div class="text-placeholder"></div> NetID to login.</div>
+            <div id="net-id-login" class="mb-2 jump-btn net-id-btn">NetID login</div>
+        </div>
+        <div class="login-item">
+            <div class="mb-2">If you dont have NetID, please choose Non NetID to login, using your account and password to login.</div>
+            <div id="seafile-login" class="mb-2 jump-btn">Non NetID login</div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="login-panel custom-module">
+    <div class="logo"></div>
+    <div class="introduce row">
+        <div class="login-item col-md-6 col-sm-12">
+            <div class="mb-2">如果拥有 NetID, 请选择 NetID 登录。</div>
+            <div id="net-id-login" class="mb-2 jump-btn net-id-btn">NetID 登录</div>
+        </div>
+        <div class="login-item col-md-6 col-sm-12">
+            <div class="mb-2">如果无 NetID, 请选择无 NetID 登录。</div>
+            <div id="seafile-login" class="mb-2 jump-btn">无NetID登录</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="login-panel main-module" style="display:none">
     <h1 class="login-panel-hd">{% trans "Log In" %}</h1>
     <form action="" method="post" id="login-form">{% csrf_token %}
         <input type="text" name="login" placeholder="{% trans "Email or Username" %}" aria-label="{% trans "Email or Username" %}" title="{% trans "Email or Username" %}" value="" class="input name-input" /><br />
@@ -69,7 +190,7 @@ html, body, #wrapper { height:100%; }
         <a href="{{ SITE_ROOT }}accounts/password/reset/" class="normal forgot-passwd">{% trans "Forgot password?" %}</a>
 	{% endif %}
 
-        <button type="submit" class="submit btn btn-primary btn-block">{% trans "Log In" %}</button>
+        <button type="submit" class="submit btn-block">{% trans "Log In" %}</button>
     </form>
 
     {% if enable_sso %}
@@ -97,7 +218,29 @@ html, body, #wrapper { height:100%; }
 
 {% block extra_script %}
 <script type="text/javascript">
-$('.login-panel-outer-container').prepend($($('#logo').html()).attr({'height': 40}).addClass('login-panel-logo'));
+var CustomModule = (function() {
+    function init() {
+        var customModule = $('.custom-module');
+        var mainModule = $('.main-module');
+        var netIDLogin = $('#net-id-login');
+        var seafileLogin = $('#seafile-login');
+        netIDLogin.on('click', function() {
+            var sso = 'https://dkuboxtest.dukekunshan.edu.cn/sso/'
+            window.location = sso + "{% if next %}?next={{ next|escape }}{% endif %}" + encodeURIComponent(document.location.hash);;
+            return false;
+        });
+        seafileLogin.on('click', function() {
+            customModule.addClass('d-none');
+            mainModule.addClass('d-block');
+        });
+    }
+
+    return {
+        init: init
+    };
+})();
+CustomModule.init();
+$('.login-panel-outer-container').prepend($($('#logo').html()).attr({'height': 64}).addClass('login-panel-logo'));
 $('.login-panel-bottom-container').append($('#lang').removeClass('fright'));
 
 var $el = $('.login-panel-outer-container');
