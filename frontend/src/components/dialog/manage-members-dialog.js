@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Table } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Table, Input, Label, FormGroup } from 'reactstrap';
 import { Utils } from '../../utils/utils';
 import { gettext } from '../../utils/constants';
 import { seafileAPI } from '../../utils/seafile-api';
@@ -31,7 +31,8 @@ class ManageMembersDialog extends React.Component {
       hasNextPage: false,
       selectedOption: null,
       errMessage: [],
-      isItemFreezed: false
+      isItemFreezed: false,
+      searchGroupMemberInputValue: '',
     };
   }
 
@@ -49,7 +50,7 @@ class ManageMembersDialog extends React.Component {
         isLoadingMore: false,
         page: page,
         hasNextPage: members.length < perPage ? false : true,
-        groupMembers: groupMembers.concat(members) 
+        groupMembers: groupMembers.concat(members)
       });
     }).catch(error => {
       let errMessage = Utils.getErrorMsg(error);
@@ -92,6 +93,23 @@ class ManageMembersDialog extends React.Component {
     });
   }
 
+  handleSearchGroupMemberInputChange = (e) => {
+    this.setState({
+      searchGroupMemberInputValue: e.target.value
+    });
+  }
+
+  searchGroupMember = () => {
+    seafileAPI.searchGroupMember(this.props.groupID, this.state.searchGroupMemberInputValue).then((res) => {
+      this.setState({
+        groupMembers: res.data,
+      });
+    }).catch(error => {
+      let errMessage = Utils.getErrorMsg(error);
+      toaster.danger(errMessage);
+    });
+  }
+
   toggleItemFreezed = (isFreezed) => {
     this.setState({
       isItemFreezed: isFreezed
@@ -112,10 +130,10 @@ class ManageMembersDialog extends React.Component {
       const isBottom = (clientHeight + scrollTop + 1 >= scrollHeight);
       if (isBottom) { // scroll to the bottom
         this.setState({isLoadingMore: true}, () => {
-          this.listGroupMembers(page + 1); 
-        }); 
-      }   
-    }   
+          this.listGroupMembers(page + 1);
+        });
+      }
+    }
   }
 
   changeMember = (targetMember) => {
@@ -157,6 +175,18 @@ class ManageMembersDialog extends React.Component {
               <Button color="secondary" disabled>{gettext('Submit')}</Button>
             }
           </div>
+          <FormGroup>
+            <Label>{gettext('Search group member')}</Label>
+            <Input
+              type="text"
+              id="search-member"
+              className="form-control w-75"
+              value={this.state.searchGroupMemberInputValue}
+              onChange={this.handleSearchGroupMemberInputChange}
+              placeholder={gettext('Search members...')}
+            />
+          </FormGroup>
+          <Button color="secondary" onClick={this.searchGroupMember}>{gettext('Search')}</Button>
           {
             this.state.errMessage.length > 0 &&
             this.state.errMessage.map((item, index = 0) => {
