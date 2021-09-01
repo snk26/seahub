@@ -161,32 +161,39 @@ class ManageMembersDialog extends React.Component {
       <Modal isOpen={true} toggle={this.toggle}>
         <ModalHeader toggle={this.toggle}>{gettext('Manage group members')}</ModalHeader>
         <ModalBody>
-          <p>{gettext('Add group member')}</p>
-          <div className='add-members'>
-            <UserSelect
-              placeholder={gettext('Search users...')}
-              onSelectChange={this.onSelectChange}
-              ref="userSelect"
-              isMulti={true}
-              className="add-members-select"
-            />
-            {this.state.selectedOption ?
-              <Button color="secondary" onClick={this.addGroupMember}>{gettext('Submit')}</Button> :
-              <Button color="secondary" disabled>{gettext('Submit')}</Button>
-            }
-          </div>
           <FormGroup>
-            <Label>{gettext('Search group member')}</Label>
-            <Input
-              type="text"
-              id="search-member"
-              className="form-control w-75"
-              value={this.state.searchGroupMemberInputValue}
-              onChange={this.handleSearchGroupMemberInputChange}
-              placeholder={gettext('Search members...')}
-            />
+            <p>{gettext('Add group member')}</p>
+            <div className='add-members'>
+              <UserSelect
+                placeholder={gettext('Search users...')}
+                onSelectChange={this.onSelectChange}
+                ref="userSelect"
+                isMulti={true}
+                className="add-members-select"
+              />
+              {this.state.selectedOption ?
+                <Button color="secondary" onClick={this.addGroupMember}>{gettext('Submit')}</Button> :
+                <Button color="secondary" disabled>{gettext('Submit')}</Button>
+              }
+            </div>
           </FormGroup>
-          <Button color="secondary" onClick={this.searchGroupMember}>{gettext('Search')}</Button>
+          <FormGroup>
+            <p>{gettext('Search group member')}</p>
+            <div className="search-members">
+              <Input
+                type="text"
+                id="search-member"
+                className="form-control search-members-input"
+                value={this.state.searchGroupMemberInputValue}
+                onChange={this.handleSearchGroupMemberInputChange}
+                placeholder={gettext('Search members...')}
+              />
+              {this.state.searchGroupMemberInputValue ?
+                <Button color="secondary" onClick={this.searchGroupMember}>{gettext('Search')}</Button> :
+                <Button color="secondary" disabled>{gettext('Search')}</Button>
+              }
+            </div>
+          </FormGroup>
           {
             this.state.errMessage.length > 0 &&
             this.state.errMessage.map((item, index = 0) => {
