@@ -140,6 +140,12 @@ from seahub.thirdparty_editor.settings import ENABLE_THIRDPARTY_EDITOR
 from seahub.thirdparty_editor.settings import THIRDPARTY_EDITOR_ACTION_URL_DICT
 from seahub.thirdparty_editor.settings import THIRDPARTY_EDITOR_ACCESS_TOKEN_EXPIRATION
 
+# hancom office
+from seahub.hancom_office.utils import get_hancom_office_doc_id, \
+        get_hancom_office_cache_key, get_hancom_office_editor_url
+from seahub.hancom_office.settings import ENABLE_HANCOM_OFFICE, \
+        HANCOM_OFFICE_EDIT_FILE_EXTENSION, HANCOM_OFFICE_VIEW_FILE_EXTENSION
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -863,6 +869,37 @@ def view_lib_file(request, repo_id, path):
             cache.set('BISHENG_OFFICE_' + doc_id, bisheng_info_dict, None)
 
             return HttpResponseRedirect(editor_url)
+
+        if ENABLE_HANCOM_OFFICE and \
+                fileext in HANCOM_OFFICE_EDIT_FILE_EXTENSION + HANCOM_OFFICE_VIEW_FILE_EXTENSION:
+
+            # openEditor vs openPreview
+            can_edit = False
+            if parse_repo_perm(permission).can_edit_on_web and \
+                    ((not is_locked) or (is_locked and locked_by_online_office)) and \
+                    fileext in HANCOM_OFFICE_EDIT_FILE_EXTENSION:
+                can_edit = True
+
+            hancom_office_editor_url = get_hancom_office_editor_url(request,
+                                                                    repo_id,
+                                                                    path)
+
+            # store info to cache
+            hancom_office_info_dict = {
+                "username": username,
+                "repo_id": repo_id,
+                "file_path": path,
+                "can_edit": can_edit,
+            }
+
+            hancom_office_doc_id = get_hancom_office_doc_id(repo_id, path)
+            cache.set(get_hancom_office_cache_key(hancom_office_doc_id), hancom_office_info_dict, None)
+
+            # return HttpResponseRedirect(hancom_office_editor_url)
+            editor_dict = {}
+            editor_dict['file_name'] = os.path.basename(path)
+            editor_dict['hancom_office_editor_url'] = hancom_office_editor_url
+            return render(request, 'view_file_hancom_office.html', editor_dict)
 
         if not HAS_OFFICE_CONVERTER:
             return_dict['err'] = "File preview unsupported"

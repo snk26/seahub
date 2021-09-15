@@ -191,6 +191,8 @@ from seahub.ocm.settings import OCM_ENDPOINT
 urlpatterns = [
     url(r'^accounts/', include('seahub.base.registration_urls')),
 
+    url(r'^hancom-office-api-(?P<doc_id>[-0-9a-f]{32})/', include('seahub.hancom_office.urls')),
+
     url(r'^sso/$', sso, name='sso'),
     url(r'^shib-login/', shib_login, name="shib_login"),
     url(r'^oauth/', include('seahub.oauth.urls')),
