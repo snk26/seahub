@@ -2,6 +2,7 @@
 
 import os
 import json
+import time
 import logging
 import requests
 
@@ -18,6 +19,7 @@ from seahub.api2.utils import api_error
 from seahub.api2.throttling import UserRateThrottle
 
 from seahub.utils import gen_file_get_url, gen_inner_file_upload_url
+from seahub.utils.file_op import ONLINE_OFFICE_LOCK_OWNER
 
 from seahub.hancom_office.utils import get_hancom_office_cache_key
 
@@ -154,6 +156,14 @@ class HancomOfficeApiFileLock(APIView):
 
     def post(self, request, doc_id):
 
+        cache_key = get_hancom_office_cache_key(doc_id)
+        file_info_dict = cache.get(cache_key)
+
+        repo_id = file_info_dict.get('repo_id')
+        file_path = file_info_dict.get('file_path')
+
+        seafile_api.lock_file(repo_id, file_path, ONLINE_OFFICE_LOCK_OWNER,
+                                                  int(time.time()) + 40 * 60)
         return Response()
 
 
@@ -165,5 +175,13 @@ class HancomOfficeApiFileUnlock(APIView):
     throttle_classes = (UserRateThrottle,)
 
     def post(self, request, doc_id):
+
+        cache_key = get_hancom_office_cache_key(doc_id)
+        file_info_dict = cache.get(cache_key)
+
+        repo_id = file_info_dict.get('repo_id')
+        file_path = file_info_dict.get('file_path')
+
+        seafile_api.unlock_file(repo_id, file_path)
 
         return Response()
