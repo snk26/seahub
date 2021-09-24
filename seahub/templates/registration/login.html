@@ -220,16 +220,28 @@ html, body, #wrapper { height:100%; }
 <script type="text/javascript">
 var CustomModule = (function() {
     function init() {
+        var key = 'duke-login-method';
+        var NET_ID_LOGIN = 'NET_ID_LOGIN';
+        var NON_NET_ID_LOGIN =' NON_NET_ID_LOGIN';
+
         var customModule = $('.custom-module');
         var mainModule = $('.main-module');
         var netIDLogin = $('#net-id-login');
         var seafileLogin = $('#seafile-login');
+        var loginMethod = sessionStorage.getItem(key);
+
+        if (loginMethod && loginMethod === NON_NET_ID_LOGIN) {
+            customModule.addClass('d-none');
+            mainModule.addClass('d-block');
+        }
+
         netIDLogin.on('click', function() {
             var sso = 'https://dkuboxtest.dukekunshan.edu.cn/sso/'
-            window.location = sso + "{% if next %}?next={{ next|escape }}{% endif %}" + encodeURIComponent(document.location.hash);;
+            window.location = sso + "{% if next %}?next={{ next|escape }}{% endif %}" + encodeURIComponent(document.location.hash);
             return false;
         });
         seafileLogin.on('click', function() {
+            sessionStorage.setItem(key, NON_NET_ID_LOGIN);
             customModule.addClass('d-none');
             mainModule.addClass('d-block');
         });
