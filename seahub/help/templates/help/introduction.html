@@ -1,12 +1,39 @@
 {% extends "help/base.html" %}
 {% load i18n %}
 
-{% block help_con %}
+{% block extra_style %}
+<style type="text/css">
+  .custom-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+  }
 
-<h3 class="hd">{% trans "Introduction" %}</h3>
+  .custom-content span {
+    text-align: center;
+  }
 
-<p>{% trans "Seafile is an enterprise file hosting platform with high reliability and performance." %}</p>
-<p>{% blocktrans %}Seafile contains a web interface for you to manage and share files. It has two kinds of desktop clients, <a href="{{ SITE_ROOT }}help/install_sync/">the file syncing client</a> and <a href="{{ SITE_ROOT }}help/using_drive_client">the drive client</a>. It also has mobile clients for Android and iOS.{% endblocktrans %}</p>
-<p>{% blocktrans %}You can download the clients in <a href="https://www.seafile.com/en/download/" target="_blank">Seafile web site</a>.{% endblocktrans %}</p>
-<p>{% blocktrans %}If this manual does not contain the information you needed, you can seek help in our forum: <a href="https://forum.seafile.com" target="_blank">https://forum.seafile.com</a>.{% endblocktrans %}</p>
+  .custom-content a {
+    cursor: pointer;
+  }
+}
+</style>
+{% endblock %}
+
+{% block main_content %}
+
+{% if LANGUAGE_CODE == 'zh-cn' %}
+<div class="custom-content">
+  <span class="item">为了帮助您更好的使用Duke Kunshan Box，请下载用户手册。</span>
+  <a class="item" href=" https://dkubox.dukekunshan.edu.cn/smart-link/71c5fb9b-7224-4327-99db-2e677c9a2936/">点击下载</a> 
+</div>
+{% else %}
+<div class="custom-content">
+  <span class="item">You can get the user manual to learn how to use Duke Kunshan Box. </span>
+  <a class="item" href=" https://dkubox.dukekunshan.edu.cn/smart-link/71c5fb9b-7224-4327-99db-2e677c9a2936/">click to download</a>
+</div>
+{% endif %}
 {% endblock %}
