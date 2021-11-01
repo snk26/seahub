@@ -56,8 +56,9 @@
 	}
 
 	.header {
-		padding: 20px 10px;
 		position: relative;
+		padding: 20px 10px;
+		height: 60px;
 		z-index: 22;
 	}
 
@@ -66,12 +67,11 @@
 	}
 
 	.main {
+		flex: 1;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		height: calc(100% - 150px);
-		text-align: center;
 		font-size: 14px;
 	}
 
@@ -89,7 +89,11 @@
 		font-size: 18px;
 		color: #fff;
 		background-color: #c71922;
-		margin-top: 30px;
+		margin-top: 10px;
+	}
+
+	.footer {
+		min-height: 20px;
 	}
 
 	@media (min-width: 991.98px) {
@@ -131,9 +135,10 @@
 	</div>
 	<!--mainBody-->
 	<div class="main">
-		<img src="{{ MEDIA_URL }}{{login_bg_image_path}}" />
+		<img src="{{ MEDIA_URL }}images/cloud2.jpg" />
 		<input type="button" class="loginbtn" id="btn" value="启动师大云服务"/>
 	</div>
+	<div class="footer"></div>
 </div>
 <script type="text/javascript" src="{% static "scripts/lib/jquery.min.js" %}" id="jquery"></script>
 <script>
