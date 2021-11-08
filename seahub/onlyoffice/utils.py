@@ -154,6 +154,7 @@ def get_onlyoffice_dict(request, username, repo_id, file_path, file_id='',
                     "forcesave": ONLYOFFICE_FORCE_SAVE,
                 },
                 "user": {
+                    "id": username,
                     "name": email2nickname(username)
                 }
             }
