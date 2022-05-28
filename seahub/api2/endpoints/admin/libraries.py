@@ -389,9 +389,9 @@ class AdminLibrary(APIView):
 
             if MULTI_TENANCY:
                 try:
-                    if seafile_api.get_org_id_by_repo_id(repo_id) > 0:
-                        error_msg = 'Can not transfer organization library.'
-                        return api_error(status.HTTP_403_FORBIDDEN, error_msg)
+                    # if seafile_api.get_org_id_by_repo_id(repo_id) > 0:
+                    #     error_msg = 'Can not transfer organization library.'
+                    #     return api_error(status.HTTP_403_FORBIDDEN, error_msg)
 
                     if ccnet_api.get_orgs_by_user(new_owner):
                         error_msg = 'Can not transfer library to organization user %s' % new_owner
@@ -407,11 +407,13 @@ class AdminLibrary(APIView):
                 error_msg = _("Library can not be transferred to owner.")
                 return api_error(status.HTTP_400_BAD_REQUEST, error_msg)
 
-            # get repo shared to user/group list
-            shared_users = seafile_api.list_repo_shared_to(
-                    repo_owner, repo_id)
-            shared_groups = seafile_api.list_repo_shared_group_by_user(
-                    repo_owner, repo_id)
+            # # get repo shared to user/group list
+            # shared_users = seafile_api.list_repo_shared_to(
+            #         repo_owner, repo_id)
+            # shared_groups = seafile_api.list_repo_shared_group_by_user(
+            #         repo_owner, repo_id)
+            shared_users = []
+            shared_groups = []
 
             # get all pub repos
             pub_repos = []
